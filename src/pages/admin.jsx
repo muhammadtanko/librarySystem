@@ -188,37 +188,45 @@ const AdminPage = () => {
                                         />
                                     </div>
                                     <div className="mb-4">
-                                        <Label htmlFor="userType" value="User Type" />
-                                        <Field as="select" name="userType" id="userType" className="form-select">
+                                        <Label htmlFor="userType" value="User Type" className="mb-1 block font-medium text-gray-700" />
+                                        <Field
+                                            as="select"
+                                            name="userType"
+                                            id="userType"
+                                            className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                        >
                                             <option value="Student">Student</option>
                                             <option value="Admin">Admin</option>
                                         </Field>
                                         <ErrorMessage
                                             name="userType"
                                             component="div"
-                                            className="text-red-500 text-sm mt-1"
+                                            className="mt-1 text-sm text-red-500"
                                         />
                                     </div>
+
                                     <div className="mb-4">
-                                        <Label htmlFor="gender" value="Gender" />
-                                        <Field as="select" name="gender" id="gender" className="form-select">
-                                            <option value="">Select Gender</option>
+                                        <Label htmlFor="gender" value="Gender" className="mb-1 block font-medium text-gray-700" />
+                                        <Field
+                                            as="select"
+                                            name="gender"
+                                            id="gender"
+                                            className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                        >
+                                            <option value="" disabled>
+                                                Select Gender
+                                            </option>
                                             <option value="Male">Male</option>
                                             <option value="Female">Female</option>
                                         </Field>
                                         <ErrorMessage
                                             name="gender"
                                             component="div"
-                                            className="text-red-500 text-sm mt-1"
+                                            className="mt-1 text-sm text-red-500"
                                         />
                                     </div>
-                                    <div className="mb-4">
-                                        <Label htmlFor="status" value="Status" />
-                                        <Field as="select" name="status" id="status" className="form-select">
-                                            <option value="Active">Active</option>
-                                            <option value="Disabled">Disabled</option>
-                                        </Field>
-                                    </div>
+
+
                                     <div className="mt-4">
                                         <Button className="bg-bgDArk" type="submit" disabled={isSubmitting}>
                                             Register

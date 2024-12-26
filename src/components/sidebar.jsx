@@ -22,7 +22,7 @@ export default function SideBar() {
 
                         {/* User Home */}
                         <Sidebar.Item as="div" icon={FaHome}>
-                            <Link to="/home">Home</Link>
+                            <Link to="/">Home</Link>
                         </Sidebar.Item>
 
                         {/* Admin Page */}
