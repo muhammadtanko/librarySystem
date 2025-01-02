@@ -1,36 +1,34 @@
 import React, { useEffect, useState } from "react";
 import Layout from "../layout/layout";
 import { Spinner, Card, Alert } from "flowbite-react";
-
+import { configs } from "../config";
 export default function Dashboard() {
   const [dashboardData, setDashboardData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Dummy data for dashboard
-  const dummyData = {
-    totalUsers: 150,
-    totalBooks: 320,
-    borrowedBooks: 80,
-    overdueBooks: 10,
-    popularBooks: [
-      { title: "1984", author: "George Orwell", borrowedCount: 25 },
-      { title: "To Kill a Mockingbird", author: "Harper Lee", borrowedCount: 20 },
-      { title: "The Great Gatsby", author: "F. Scott Fitzgerald", borrowedCount: 18 },
-    ],
-  };
-
   useEffect(() => {
-    // Simulate API fetch with dummy data
-    setTimeout(() => {
+    const fetchDashboardData = async () => {
+      setLoading(true);
       try {
-        setDashboardData(dummyData);
+        const response = await fetch(`${configs.baseUrl}/dashboard`);
+        if (!response.ok) {
+          throw new Error("Failed to fetch dashboard data.");
+        }
+        const { ok, payLoad } = await response.json();
+        if (ok) {
+          setDashboardData(payLoad);
+        } else {
+          throw new Error("Failed to fetch dashboard data.");
+        }
       } catch (err) {
-        setError("Failed to load dashboard data.");
+        setError(err.message);
       } finally {
         setLoading(false);
       }
-    }, 1000); // Simulate 1-second delay
+    };
+
+    fetchDashboardData();
   }, []);
 
   return (
@@ -87,9 +85,9 @@ export default function Dashboard() {
                     </tr>
                   </thead>
                   <tbody>
-                    {dashboardData.popularBooks.map((book, index) => (
+                    {dashboardData.popularBooks.map((book) => (
                       <tr
-                        key={index}
+                        key={book._id}
                         className="hover:bg-gray-50 border-b border-gray-200"
                       >
                         <td className="px-4 py-2">{book.title}</td>

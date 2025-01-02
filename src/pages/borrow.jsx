@@ -1,18 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import Layout from "../layout/layout";
+import { configs } from "../config";
 
 export default function BorrowingRecords() {
-  // Mock data for users and books (replace with actual data from your API)
-  const users = [
-    { id: "1", name: "John Doe" },
-    { id: "2", name: "Jane Smith" },
-  ];
-  const books = [
-    { id: "1", title: "Book One" },
-    { id: "2", title: "Book Two" },
-  ];
+  const [users, setUsers] = useState([]);
+  const [books, setBooks] = useState([]);
+  const [errorMessage, setErrorMessage] = useState(""); // For error message
+  const [successMessage, setSuccessMessage] = useState(""); // For success message
 
   // Borrow Book initial values
   const initialBorrowValues = {
@@ -22,9 +18,9 @@ export default function BorrowingRecords() {
   };
 
   // Return Book initial values
-  const initialReturnValues = {
-    borrowingId: "",
-  };
+  // const initialReturnValues = {
+  //   borrowingId: "",
+  // };
 
   // Borrow Book validation schema
   const borrowValidationSchema = Yup.object({
@@ -36,27 +32,96 @@ export default function BorrowingRecords() {
   });
 
   // Return Book validation schema
-  const returnValidationSchema = Yup.object({
-    borrowingId: Yup.string().required("Borrowing record ID is required"),
-  });
+  // const returnValidationSchema = Yup.object({
+  //   borrowingId: Yup.string().required("Borrowing record ID is required"),
+  // });
 
   // Handlers
-  const handleBorrowSubmit = (values, { resetForm }) => {
-    console.log("Borrow Record:", values);
-    alert("Book borrowed successfully!");
-    resetForm();
+  const handleBorrowSubmit = async (values, { resetForm }) => {
+    try {
+      const response = await fetch(`${configs.baseUrl}/record`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(values),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Failed to borrow the book');
+      }
+
+      if (data.ok) {
+        console.log('Borrow Record:', data);
+        setSuccessMessage('Book borrowed successfully!');
+        setErrorMessage('');
+        resetForm();
+      } else {
+        setErrorMessage(data.message || 'An error occurred');
+        setSuccessMessage('');
+      }
+    } catch (error) {
+      console.error('Error borrowing book:', error);
+      setErrorMessage('An error occurred while borrowing the book. Please try again.');
+      setSuccessMessage('');
+    }
   };
 
-  const handleReturnSubmit = (values, { resetForm }) => {
-    console.log("Return Record:", values);
-    alert("Book returned successfully!");
-    resetForm();
-  };
+  // const handleReturnSubmit = (values, { resetForm }) => {
+  //   console.log("Return Record:", values);
+  //   alert("Book returned successfully!");
+  //   resetForm();
+  // };
+
+  // Fetch users and books from the API
+  useEffect(() => {
+    // Fetch users from API
+    const fetchUsers = async () => {
+      try {
+        const response = await fetch(`${configs.baseUrl}/user`); // Replace with your API endpoint
+        const data = await response.json();
+        if (data.ok) {
+          setUsers(data.payLoad); // Set users to state
+        }
+      } catch (error) {
+        console.error("Error fetching users:", error);
+      }
+    };
+
+    // Fetch books from API
+    const fetchBooks = async () => {
+      try {
+        const response = await fetch(`${configs.baseUrl}/book`); // Replace with your API endpoint
+        const data = await response.json();
+        if (data.ok) {
+          setBooks(data.payLoad); // Set books to state
+        }
+      } catch (error) {
+        console.error("Error fetching books:", error);
+      }
+    };
+
+    fetchUsers();
+    fetchBooks();
+  }, []);
 
   return (
     <Layout>
       <div className="p-6 bg-gray-50 min-h-screen">
-        <h1 className="text-2xl font-semibold text-gray-700 mb-6">Borrowing and Returning Books</h1>
+        <h1 className="text-2xl font-semibold text-gray-700 mb-6">Borrowing Books</h1>
+
+        {successMessage && (
+          <div className="mb-4 p-4 text-green-700 bg-green-100 rounded">
+            {successMessage}
+          </div>
+        )}
+        {errorMessage && (
+          <div className="mb-4 p-4 text-red-700 bg-red-100 rounded">
+            {errorMessage}
+          </div>
+        )}
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Borrow Book Form */}
@@ -81,8 +146,8 @@ export default function BorrowingRecords() {
                     >
                       <option value="">Select a user</option>
                       {users.map((user) => (
-                        <option key={user.id} value={user.id}>
-                          {user.name}
+                        <option key={user._id} value={user._id}>
+                          {user.firstName} {user.lastName}
                         </option>
                       ))}
                     </Field>
@@ -105,8 +170,8 @@ export default function BorrowingRecords() {
                     >
                       <option value="">Select a book</option>
                       {books.map((book) => (
-                        <option key={book.id} value={book.id}>
-                          {book.title}
+                        <option key={book._id} value={book._id}>
+                          {book.title} by {book.author}
                         </option>
                       ))}
                     </Field>
@@ -149,7 +214,7 @@ export default function BorrowingRecords() {
           </div>
 
           {/* Return Book Form */}
-          <div className="bg-white p-6 rounded-lg shadow">
+          {/* <div className="bg-white p-6 rounded-lg shadow">
             <h2 className="text-xl font-semibold text-gray-700 mb-4">Return a Book</h2>
             <Formik
               initialValues={initialReturnValues}
@@ -160,7 +225,7 @@ export default function BorrowingRecords() {
                 <Form>
                   <div className="mb-4">
                     <label htmlFor="borrowingId" className="block text-sm font-medium text-gray-700">
-                      Book Name
+                      Borrowing ID
                     </label>
                     <Field
                       name="borrowingId"
@@ -187,7 +252,7 @@ export default function BorrowingRecords() {
                 </Form>
               )}
             </Formik>
-          </div>
+          </div> */}
         </div>
       </div>
     </Layout>

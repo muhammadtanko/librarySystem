@@ -37,12 +37,12 @@ export default function SideBar() {
 
                         {/* Register New Books */}
                         <Sidebar.Item as="div" icon={FaPlusCircle}>
-                            <Link to="/books/register">Register Books</Link>
+                            <Link to="/books/return">Return Books</Link>
                         </Sidebar.Item>
 
                         {/* Borrow/Return Books */}
                         <Sidebar.Item as="div" icon={FaBookReader}>
-                            <Link to="/books/borrow">Borrow/Return Books</Link>
+                            <Link to="/books/borrow">Borrow Books</Link>
                         </Sidebar.Item>
                     </Sidebar.ItemGroup>
                 </Sidebar.Items>
