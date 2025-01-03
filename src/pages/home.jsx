@@ -1,9 +1,16 @@
 import React, { useEffect, useState } from "react";
 import Layout from "../layout/layout";
 import { configs } from "../config";
+import { useSelector } from "react-redux";
+
+
+
+
 
 export default function Home() {
   // State for borrowed books, statistics, and modal visibility
+  const currentUser = useSelector((state) => state.user.user)
+  const currentUserId = useSelector((state) => state.user.user._id)
   const [borrowedBooks, setBorrowedBooks] = useState([]);
   const [statistics, setStatistics] = useState({
     totalBorrowed: 0,
@@ -16,9 +23,10 @@ export default function Home() {
   useEffect(() => {
     // Fetch borrowed books and statistics from API
     const fetchBooks = async () => {
+      console.log({ currentUserId });
+      console.log({ currentUser });
       try {
-        const userId = "6775850a543ad6edf4304ebc"; // example user ID
-        const response = await fetch(`${configs.baseUrl}/record/user/${userId}`);
+        const response = await fetch(`${configs.baseUrl}/record/user/${currentUserId}`);
         const data = await response.json();
         console.log(data);
         if (data.ok) {
@@ -46,11 +54,41 @@ export default function Home() {
     setIsModalOpen(true);
   };
 
-  const handlePay = () => {
-    // Handle the logic to pay the fine, e.g., making an API request to update fine status
-    console.log(`Pay fine for book ${selectedBook._id}`);
-    setIsModalOpen(false);
+  const handlePay = async () => {
+    try {
+
+      const response = await fetch(`${configs.baseUrl}/record/pay-fine`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          recordId: selectedBook._id,
+          userId: currentUserId,
+        }),
+      });
+
+      const result = await response.json();
+      console.log({ result });
+      if (response.ok) {
+        console.log("Fine paid successfully:", result);
+        // Update the UI after successful payment
+        setBorrowedBooks((prevBooks) =>
+          prevBooks.map((book) =>
+            book._id === selectedBook._id ? { ...book, finePaid: true } : book
+          )
+        );
+        setIsModalOpen(false);
+      } else {
+        console.error("Error paying fine:", result.message);
+        alert(`Error: ${result.message}`);
+      }
+    } catch (error) {
+      console.error("Error making payment:", error);
+      alert("An unexpected error occurred. Please try again.");
+    }
   };
+
 
   const closeModal = () => {
     setIsModalOpen(false);
