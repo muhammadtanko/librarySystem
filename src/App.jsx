@@ -6,6 +6,8 @@ import Admin from "./pages/admin";
 import ReturnBooks from "./pages/returnBooks";
 import BorrowingRecords from "./pages/borrow";
 import Home from "./pages/home";
+
+
 function App() {
 
 
@@ -13,8 +15,8 @@ function App() {
     <>
       <main>
         <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
+          <Route path="/" element={<Login />} />
+          <Route path="/home" element={<Home />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/books" element={<Books />} />
           <Route path="/admin" element={<Admin />} />

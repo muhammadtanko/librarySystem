@@ -4,8 +4,14 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import Layout from "../layout/layout";
 import { configs } from "../config";
+import { useSelector } from 'react-redux';
+
 
 const Books = () => {
+
+  const { user } = useSelector((state) => state.user)
+
+
   const [books, setBooks] = useState([]);
   const [filteredBooks, setFilteredBooks] = useState([]);
   const [filters, setFilters] = useState({
@@ -118,13 +124,14 @@ const Books = () => {
     <Layout>
       <div className="p-6">
         <h1 className="text-2xl font-semibold mb-6">Books</h1>
-        <Button
+        {/* userType: 'Admin', */}
+        {user.userType === "Admin" && <Button
           color="blue"
           className="my-4"
           onClick={() => setShowRegisterModal(true)}
         >
           Register Book
-        </Button>
+        </Button>}
 
         {/* Filters */}
         <div className="mb-4 grid grid-cols-2 gap-4">
@@ -151,7 +158,8 @@ const Books = () => {
                 <th className="border border-gray-300 px-4 py-2">Category</th>
                 <th className="border border-gray-300 px-4 py-2">Year</th>
                 <th className="border border-gray-300 px-4 py-2">Copies</th>
-                <th className="border border-gray-300 px-4 py-2">Actions</th>
+                {user.userType === "Admin" && <th className="border border-gray-300 px-4 py-2">Actions</th>}
+
               </tr>
             </thead>
             <tbody>
@@ -167,7 +175,8 @@ const Books = () => {
                   <td className="border border-gray-300 px-4 py-2">
                     {book.copiesAvailable}/{book.totalCopies}
                   </td>
-                  <td className="border border-gray-300 px-4 py-2 flex gap-2">
+
+                  {user.userType === "Admin" && <td className="border border-gray-300 px-4 py-2 flex gap-2">
                     <Button
                       className="bg-blue-700"
                       onClick={() => {
@@ -177,7 +186,8 @@ const Books = () => {
                     >
                       Edit
                     </Button>
-                  </td>
+                  </td>}
+
                 </tr>
               ))}
             </tbody>
