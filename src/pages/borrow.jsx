@@ -48,10 +48,10 @@ export default function BorrowingRecords() {
       });
 
       const data = await response.json();
-
       if (!response.ok) {
         throw new Error(data.message || 'Failed to borrow the book');
       }
+     
 
       if (data.ok) {
         console.log('Borrow Record:', data);
@@ -59,6 +59,7 @@ export default function BorrowingRecords() {
         setErrorMessage('');
         resetForm();
       } else {
+        console.log("err", data.message);
         setErrorMessage(data.message || 'An error occurred');
         setSuccessMessage('');
       }

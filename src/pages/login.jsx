@@ -36,6 +36,7 @@ const Login = () => {
     return (
         <div className="w-screen h-screen flex items-center justify-center">
             <div className="w-full max-w-sm p-4 border border-gray-200 bg-white shadow">
+                <h2 className="text-lg font-semibold text-center mb-4 text-teal-600 ">Library Management System</h2>
                 <h2 className="text-lg font-semibold text-center mb-4">Login</h2>
 
                 {/* Alert for success or error */}

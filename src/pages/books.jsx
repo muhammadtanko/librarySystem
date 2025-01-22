@@ -1,16 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { Modal, Button, TextInput, Label } from "flowbite-react";
+import { Modal, Button, TextInput, Label, Table } from "flowbite-react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import Layout from "../layout/layout";
 import { configs } from "../config";
-import { useSelector } from 'react-redux';
-
+import { useSelector } from "react-redux";
 
 const Books = () => {
-
-  const { user } = useSelector((state) => state.user)
-
+  const { user } = useSelector((state) => state.user);
 
   const [books, setBooks] = useState([]);
   const [filteredBooks, setFilteredBooks] = useState([]);
@@ -123,18 +120,20 @@ const Books = () => {
   return (
     <Layout>
       <div className="p-6">
-        <h1 className="text-2xl font-semibold mb-6">Books</h1>
-        {/* userType: 'Admin', */}
-        {user.userType === "Admin" && <Button
-          color="blue"
-          className="my-4"
-          onClick={() => setShowRegisterModal(true)}
-        >
-          Register Book
-        </Button>}
+        <h1 className="text-3xl font-bold mb-6">Books Management</h1>
+
+        {user.userType === "Admin" && (
+          <Button
+            color="success"
+            className="mb-6"
+            onClick={() => setShowRegisterModal(true)}
+          >
+            Register New Book
+          </Button>
+        )}
 
         {/* Filters */}
-        <div className="mb-4 grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
           {["title", "author", "genre", "category"].map((filter) => (
             <TextInput
               key={filter}
@@ -148,37 +147,34 @@ const Books = () => {
         </div>
 
         {/* Book List */}
-        <div className="overflow-x-auto">
-          <table className="table-auto w-full border-collapse border border-gray-300">
-            <thead>
-              <tr className="bg-gray-100">
-                <th className="border border-gray-300 px-4 py-2">Title</th>
-                <th className="border border-gray-300 px-4 py-2">Author</th>
-                <th className="border border-gray-300 px-4 py-2">Genre</th>
-                <th className="border border-gray-300 px-4 py-2">Category</th>
-                <th className="border border-gray-300 px-4 py-2">Year</th>
-                <th className="border border-gray-300 px-4 py-2">Copies</th>
-                {user.userType === "Admin" && <th className="border border-gray-300 px-4 py-2">Actions</th>}
-
-              </tr>
-            </thead>
-            <tbody>
-              {filteredBooks.map((book) => (
-                <tr key={book._id}>
-                  <td className="border border-gray-300 px-4 py-2">{book.title}</td>
-                  <td className="border border-gray-300 px-4 py-2">{book.author}</td>
-                  <td className="border border-gray-300 px-4 py-2">{book.genre}</td>
-                  <td className="border border-gray-300 px-4 py-2">{book.category}</td>
-                  <td className="border border-gray-300 px-4 py-2">
-                    {book.publicationYear}
-                  </td>
-                  <td className="border border-gray-300 px-4 py-2">
-                    {book.copiesAvailable}/{book.totalCopies}
-                  </td>
-
-                  {user.userType === "Admin" && <td className="border border-gray-300 px-4 py-2 flex gap-2">
+        <Table hoverable={true} className="mb-6">
+          <Table.Head>
+            <Table.HeadCell>Title</Table.HeadCell>
+            <Table.HeadCell>Author</Table.HeadCell>
+            <Table.HeadCell>Genre</Table.HeadCell>
+            <Table.HeadCell>ISBN</Table.HeadCell>
+            <Table.HeadCell>Category</Table.HeadCell>
+            <Table.HeadCell>Year</Table.HeadCell>
+            <Table.HeadCell>Copies</Table.HeadCell>
+            {user.userType === "Admin" && <Table.HeadCell>Actions</Table.HeadCell>}
+          </Table.Head>
+          <Table.Body className="divide-y">
+            {filteredBooks.map((book) => (
+              <Table.Row key={book._id} className="hover:bg-gray-50">
+                <Table.Cell>{book.title}</Table.Cell>
+                <Table.Cell>{book.author}</Table.Cell>
+                <Table.Cell>{book.genre}</Table.Cell>
+                <Table.Cell>{book.isbn}</Table.Cell>
+                <Table.Cell>{book.category}</Table.Cell>
+                <Table.Cell>{book.publicationYear}</Table.Cell>
+                <Table.Cell>
+                  {book.copiesAvailable}/{book.totalCopies}
+                </Table.Cell>
+                {user.userType === "Admin" && (
+                  <Table.Cell>
                     <Button
-                      className="bg-blue-700"
+                      color="info"
+                      className="bg-bgDArk"
                       onClick={() => {
                         setEditingBook(book);
                         setShowEditModal(true);
@@ -186,17 +182,19 @@ const Books = () => {
                     >
                       Edit
                     </Button>
-                  </td>}
-
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+                  </Table.Cell>
+                )}
+              </Table.Row>
+            ))}
+          </Table.Body>
+        </Table>
 
         {/* Register Modal */}
-        <Modal show={showRegisterModal} onClose={() => setShowRegisterModal(false)}>
-          <Modal.Header>Register Book</Modal.Header>
+        <Modal
+          show={showRegisterModal}
+          onClose={() => setShowRegisterModal(false)}
+        >
+          <Modal.Header>Register New Book</Modal.Header>
           <Modal.Body>
             <Formik
               initialValues={{
@@ -229,7 +227,7 @@ const Books = () => {
                     </div>
                   ))}
                   <div className="mb-4">
-                    <Label htmlFor="publicationYear" value="Year" />
+                    <Label htmlFor="publicationYear" value="Publication Year" />
                     <Field
                       id="publicationYear"
                       name="publicationYear"
@@ -250,7 +248,7 @@ const Books = () => {
                       name="totalCopies"
                       type="number"
                       as={TextInput}
-                      placeholder="Total Copies"
+                      placeholder="Copies"
                     />
                     <ErrorMessage
                       name="totalCopies"
@@ -260,7 +258,8 @@ const Books = () => {
                   </div>
                   <Button
                     type="submit"
-                    className="bg-bgDArk"
+                    color="success"
+
                     disabled={isSubmitting}
                   >
                     Register Book
@@ -273,7 +272,7 @@ const Books = () => {
 
         {/* Edit Modal */}
         <Modal show={showEditModal} onClose={() => setShowEditModal(false)}>
-          <Modal.Header>Edit Book</Modal.Header>
+          <Modal.Header>Edit Book Details</Modal.Header>
           <Modal.Body>
             <Formik
               initialValues={{
@@ -307,7 +306,7 @@ const Books = () => {
                     </div>
                   ))}
                   <div className="mb-4">
-                    <Label htmlFor="publicationYear" value="Year" />
+                    <Label htmlFor="publicationYear" value="Publication Year" />
                     <Field
                       id="publicationYear"
                       name="publicationYear"
@@ -328,7 +327,7 @@ const Books = () => {
                       name="totalCopies"
                       type="number"
                       as={TextInput}
-                      placeholder="Total Copies"
+                      placeholder="Copies"
                     />
                     <ErrorMessage
                       name="totalCopies"
@@ -339,6 +338,7 @@ const Books = () => {
                   <Button
                     type="submit"
                     className="bg-bgDArk"
+                    color="info"
                     disabled={isSubmitting}
                   >
                     Update Book

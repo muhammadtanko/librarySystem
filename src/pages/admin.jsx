@@ -10,7 +10,7 @@ const AdminPage = () => {
     const [showModal, setShowModal] = useState(false);
     const [currentUser, setCurrentUser] = useState(null);
     const [showRegisterModal, setShowRegisterModal] = useState(false);
-    // Fetch users from the API
+
     const fetchUsers = async () => {
         try {
             const response = await fetch(`${configs.baseUrl}/user`);
@@ -18,8 +18,6 @@ const AdminPage = () => {
                 throw new Error("Failed to fetch users");
             }
             const data = await response.json();
-            console.log("Fetched users:", data);  // Log the data to check its structure
-            // Ensure 'payLoad' is an array and update 'users' state
             setUsers(Array.isArray(data.payLoad) ? data.payLoad : []);
         } catch (error) {
             console.error("Error fetching users:", error);
@@ -30,44 +28,36 @@ const AdminPage = () => {
         fetchUsers();
     }, []);
 
-    // Handle editing of a user
     const handleEditClick = (user) => {
-        setCurrentUser(user);  // Set the current user for the modal
-        setShowModal(true);     // Show the modal
+        setCurrentUser(user);
+        setShowModal(true);
     };
 
-    // Handle user update
     const handleUpdate = async (values, { resetForm }) => {
         try {
-            // Make the PUT request to update the user
             const response = await fetch(`${configs.baseUrl}/user/${currentUser._id}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(values), // Send form values as JSON
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(values),
             });
 
             if (!response.ok) {
-                throw new Error('Failed to update user');
+                throw new Error("Failed to update user");
             }
 
-            // Update local state only after the request succeeds
             setUsers((prevUsers) =>
                 prevUsers.map((user) =>
                     user._id === currentUser._id ? { ...user, ...values } : user
                 )
             );
 
-            // Close the modal and reset the form
             setShowModal(false);
             resetForm();
         } catch (error) {
-            console.error('Error updating user:', error);
-            // Optionally show an error message to the user
+            console.error("Error updating user:", error);
         }
     };
-    // Handle user registration
+
     const handleRegister = async (values, { resetForm }) => {
         try {
             const response = await fetch(`${configs.baseUrl}/user`, {
@@ -89,7 +79,6 @@ const AdminPage = () => {
         }
     };
 
-    // Validation schema for the form
     const validationSchema = Yup.object({
         firstName: Yup.string().required("First name is required"),
         lastName: Yup.string().required("Last name is required"),
@@ -99,7 +88,6 @@ const AdminPage = () => {
         gender: Yup.string().required("Gender is required"),
         status: Yup.string().required("Status is required"),
     });
-
     // Validation schema for user registration
     const registerValidationSchema = Yup.object({
         firstName: Yup.string().required("First name is required"),
@@ -112,44 +100,48 @@ const AdminPage = () => {
         gender: Yup.string().required("Gender is required"),
         status: Yup.string().required("Status is required"),
     });
+
     return (
         <Layout>
             <div className="p-6">
-                <h1 className="text-2xl font-semibold mb-6">Admin Page</h1>
+                <h1 className="text-3xl font-bold mb-6 text-gray-800">Admin Panel</h1>
                 <Button
-                    className="mb-4 bg-bgDArk text-white"
+                    className="mb-4 bg-blue-600 hover:bg-blue-700 text-white"
                     onClick={() => setShowRegisterModal(true)}
                 >
                     Register User
                 </Button>
-                <table className="table-auto w-full border-collapse border border-gray-300 mt-6">
+                <table className="table-auto w-full border-collapse border border-gray-300">
                     <thead>
-                        <tr className="bg-gray-100">
-                            <th className="border border-gray-300 px-4 py-2">First Name</th>
-                            <th className="border border-gray-300 px-4 py-2">Last Name</th>
-                            <th className="border border-gray-300 px-4 py-2">ID</th>
-                            <th className="border border-gray-300 px-4 py-2">Email</th>
-                            <th className="border border-gray-300 px-4 py-2">Phone</th>
-                            <th className="border border-gray-300 px-4 py-2">User Type</th>
-                            <th className="border border-gray-300 px-4 py-2">Gender</th>
-                            <th className="border border-gray-300 px-4 py-2">Status</th>
-                            <th className="border border-gray-300 px-4 py-2">Actions</th>
+                        <tr className="bg-blue-50 text-blue-900">
+                            <th className="border px-4 py-2">First Name</th>
+                            <th className="border px-4 py-2">Last Name</th>
+                            <th className="border px-4 py-2">ID</th>
+                            <th className="border px-4 py-2">Email</th>
+                            <th className="border px-4 py-2">Phone</th>
+                            <th className="border px-4 py-2">User Type</th>
+                            <th className="border px-4 py-2">Gender</th>
+                            <th className="border px-4 py-2">Status</th>
+                            <th className="border px-4 py-2">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         {users.map((user) => (
-                            <tr key={user._id}>
-                                <td className="border border-gray-300 px-4 py-2">{user.firstName}</td>
-                                <td className="border border-gray-300 px-4 py-2">{user.lastName}</td>
-                                <td className="border border-gray-300 px-4 py-2">{user.ID}</td>
-                                <td className="border border-gray-300 px-4 py-2">{user.email}</td>
-                                <td className="border border-gray-300 px-4 py-2">{user.phone}</td>
-                                <td className="border border-gray-300 px-4 py-2">{user.userType}</td>
-                                <td className="border border-gray-300 px-4 py-2">{user.gender}</td>
-                                <td className="border border-gray-300 px-4 py-2">{user.status}</td>
-                                <td className="border border-gray-300 px-4 py-2">
+                            <tr
+                                key={user._id}
+                                className="hover:bg-gray-100 text-gray-700 border-t"
+                            >
+                                <td className="border px-4 py-2">{user.firstName}</td>
+                                <td className="border px-4 py-2">{user.lastName}</td>
+                                <td className="border px-4 py-2">{user.ID}</td>
+                                <td className="border px-4 py-2">{user.email}</td>
+                                <td className="border px-4 py-2">{user.phone}</td>
+                                <td className="border px-4 py-2">{user.userType}</td>
+                                <td className="border px-4 py-2">{user.gender}</td>
+                                <td className="border px-4 py-2">{user.status}</td>
+                                <td className="border px-4 py-2 text-center">
                                     <Button
-                                        size="lg"
+                                        size="sm"
                                         color="blue"
                                         onClick={() => handleEditClick(user)}
                                     >
@@ -160,7 +152,7 @@ const AdminPage = () => {
                         ))}
                     </tbody>
                 </table>
-                {/* Register User Modal */}
+
                 <Modal show={showRegisterModal} onClose={() => setShowRegisterModal(false)}>
                     <Modal.Header>Register User</Modal.Header>
                     <Modal.Body>
