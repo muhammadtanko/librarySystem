@@ -4,9 +4,8 @@ import * as Yup from 'yup';
 import { useDispatch, useSelector } from 'react-redux';
 import { Alert } from 'flowbite-react';
 import { loginUser } from '../store/authSlice';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useEffect } from 'react';
-
 
 const LoginSchema = Yup.object().shape({
     email: Yup.string().required('Email is required'),
@@ -23,6 +22,7 @@ const Login = () => {
     const handleLogin = (values) => {
         dispatch(loginUser(values));
     };
+
     useEffect(() => {
         console.log("loginStatus", loginStatus);
         if (loginStatus === 'succeeded') {
@@ -30,13 +30,13 @@ const Login = () => {
                 navigate('/home');
             }, 3000);
             return () => clearTimeout(timer);
-
         }
-    })
+    });
+
     return (
         <div className="w-screen h-screen flex items-center justify-center">
             <div className="w-full max-w-sm p-4 border border-gray-200 bg-white shadow">
-                <h2 className="text-lg font-semibold text-center mb-4 text-teal-600 ">Library Management System</h2>
+                <h2 className="text-lg font-semibold text-center mb-4 text-teal-600">Library Management System</h2>
                 <h2 className="text-lg font-semibold text-center mb-4">Login</h2>
 
                 {/* Alert for success or error */}
@@ -112,6 +112,16 @@ const Login = () => {
                         </Form>
                     )}
                 </Formik>
+
+                {/* Forgot Password Link */}
+                <div className="text-center mt-4">
+                    <Link
+                        to="/forgot-password"
+                        className="text-sm text-indigo-500 hover:text-indigo-600"
+                    >
+                        Forgot Password?
+                    </Link>
+                </div>
             </div>
         </div>
     );

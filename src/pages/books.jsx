@@ -202,6 +202,7 @@ const Books = () => {
                 author: "",
                 genre: "",
                 category: "",
+                isbn: "",
                 publicationYear: "",
                 totalCopies: 1,
               }}
@@ -210,7 +211,7 @@ const Books = () => {
             >
               {({ isSubmitting }) => (
                 <Form>
-                  {["title", "author", "genre", "category"].map((field) => (
+                  {["title", "author", "genre", "category","isbn"].map((field) => (
                     <div key={field} className="mb-4">
                       <Label htmlFor={field} value={field} />
                       <Field
@@ -280,6 +281,7 @@ const Books = () => {
                 author: editingBook?.author || "",
                 genre: editingBook?.genre || "",
                 category: editingBook?.category || "",
+                isbn: editingBook?.isbn || "",
                 publicationYear: editingBook?.publicationYear || "",
                 totalCopies: editingBook?.totalCopies || 1,
               }}
@@ -289,7 +291,7 @@ const Books = () => {
             >
               {({ isSubmitting }) => (
                 <Form>
-                  {["title", "author", "genre", "category"].map((field) => (
+                  {["title", "author", "genre", "category","isbn"].map((field) => (
                     <div key={field} className="mb-4">
                       <Label htmlFor={field} value={field} />
                       <Field
